@@ -1,0 +1,27 @@
+CHANGELOG — Apiari
+==================
+
+v1.0 — 31 luglio 2026
+---------------------
+Prima release funzionante.
+
+- Anagrafica Apiari: scheda generale con nome, coordinate GPS (manuali o da
+  geolocalizzazione), note di accesso, flora/fonti nettarifere, foto, note
+- Anagrafica Famiglie: scheda indipendente dall'apiario, con codice
+  identificativo, origine, anno/colore regina (standard apistico), stato
+  (attiva/orfana/unita/morta/venduta)
+- Spostamento famiglia tra apiari con storico completo (data, apiario di
+  provenienza/destinazione, motivo)
+- Checklist di visita rapida: regina vista, covata fresca, celle reali,
+  forza (telaini), scorte miele/polline a stelline, temperamento, patologie
+  (varroa/peste/nosema/altro), trattamenti, melari posizionati/ritirati,
+  kg raccolti, note con dettatura vocale, foto
+- Trattamento cumulato: registrazione rapida di un intervento per tutte le
+  famiglie attive di un apiario in un solo tocco
+- Dashboard con stato a semaforo (verde/giallo/rosso) per apiari e famiglie,
+  calcolato su giorni dall'ultima visita ed eventuali criticità rilevate
+- Elenco situazioni critiche e visite recenti in evidenza
+- Ricerca e filtri per apiario/stato nell'elenco famiglie
+- Backup e ripristino dati in formato JSON (nessun dato lascia il dispositivo)
+- App installabile, offline-first, con banner di aggiornamento non invasivo
+- Manuale d'uso integrato con scheda autore e sezione privacy/GDPR

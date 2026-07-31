@@ -1,0 +1,29 @@
+AUTORE
+------
+Lazzaro Serva
+Via Tasso, 28 – 84051 Centola (SA) – Italia
+http://www.graficaesiti.it/
+
+PROGETTO
+--------
+Nome:        Apiari
+Versione:    1.0
+Data:        Luglio 2026
+Descrizione: Gestione di apiari, famiglie di api e visite apistiche in campo.
+             Apiario e famiglia sono entità indipendenti: una famiglia può
+             essere spostata liberamente tra postazioni mantenendo l'intero
+             storico spostamenti e visite.
+
+COPYRIGHT
+---------
+Copyright (c) 2026 Lazzaro Serva - Centola
+Tutti i diritti riservati. Vedi LICENSE.
+
+TECNOLOGIE
+----------
+- HTML5 / CSS3 / JavaScript vanilla (nessun framework)
+- Progressive Web App (manifest.json + Service Worker offline-first)
+- LocalStorage per la persistenza dati (nessun server, nessun cloud)
+- Web Speech API (dettatura vocale nei campi note)
+- Geolocation API (rilevamento coordinate GPS apiario)
+- Canvas API (compressione foto lato client prima del salvataggio)

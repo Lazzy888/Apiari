@@ -1,0 +1,594 @@
+<!--
+  ============================================================
+  Apiari v1.0 — Gestione apiari, famiglie e visite apistiche
+  Copyright (c) 2026 Lazzaro Serva - Centola
+  Via Tasso, 28 – 84051 CENTOLA (SA) – Italia
+  http://www.graficaesiti.it/
+  Tutti i diritti riservati – All rights reserved.
+  Vietata riproduzione, modifica e distribuzione senza
+  autorizzazione scritta del titolare del copyright.
+  ============================================================
+-->
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8"/>
+<!-- Content Security Policy -->
+<meta http-equiv="Content-Security-Policy"
+  content="default-src 'self';
+           script-src 'self' 'unsafe-inline';
+           style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+           font-src 'self' https://fonts.gstatic.com;
+           img-src 'self' data: blob:;
+           media-src 'self' blob:;
+           connect-src 'self';
+           worker-src 'self';
+           manifest-src 'self';"/>
+<meta name="referrer" content="no-referrer"/>
+<meta http-equiv="Permissions-Policy"
+  content="microphone=(self), camera=(), geolocation=(self), payment=(), usb=(), bluetooth=()"/>
+<meta http-equiv="X-Content-Type-Options" content="nosniff"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<meta name="theme-color" content="#b3690a"/>
+<meta name="description" content="Apiari — gestione di apiari, famiglie e visite apistiche, offline e senza account."/>
+<title>Apiari</title>
+<link rel="manifest" href="manifest.json"/>
+<link rel="icon" href="assets/icon-192.png"/>
+<link rel="apple-touch-icon" href="assets/icon-192.png"/>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+<!-- Banner aggiornamento -->
+<div id="updateBanner" role="status" aria-live="polite">
+  <div class="ub-text">🆕 Nuova versione disponibile
+    <span class="ub-sub">Aggiorna per applicare le novità</span>
+  </div>
+  <button class="ub-btn" id="updateNowBtn">Aggiorna</button>
+  <button class="ub-close" id="updateDismissBtn" aria-label="Chiudi">✕</button>
+</div>
+
+<header id="header">
+  <span class="logo">🐝</span>
+  <div class="title">Apiari<span>Gestione apiari e visite</span></div>
+  <button class="hdr-btn" id="helpBtn" aria-label="Manuale d'uso">❓</button>
+</header>
+
+<main>
+
+  <!-- ==================== DASHBOARD ==================== -->
+  <section class="view" id="view-dashboard">
+    <div class="section-title">🏠 Panoramica</div>
+    <div class="stat-grid">
+      <div class="stat-card"><div class="stat-num" id="statApiari">0</div><div class="stat-lbl">Apiari attivi</div></div>
+      <div class="stat-card"><div class="stat-num" id="statFamiglie">0</div><div class="stat-lbl">Famiglie totali</div></div>
+      <div class="stat-card warn"><div class="stat-num" id="statCritiche">0</div><div class="stat-lbl">Situazioni critiche</div></div>
+      <div class="stat-card"><div class="stat-num" id="statVisite30">0</div><div class="stat-lbl">Visite (ultimi 30gg)</div></div>
+    </div>
+
+    <div class="dash-block">
+      <h3>🚨 Da controllare</h3>
+      <div class="mini-list" id="dashCritiche"></div>
+    </div>
+
+    <div class="dash-block">
+      <h3>🗺️ Stato apiari</h3>
+      <div class="card-list" id="dashApiari"></div>
+    </div>
+
+    <div class="dash-block">
+      <h3>🕓 Visite recenti</h3>
+      <div class="mini-list" id="dashVisiteRecenti"></div>
+    </div>
+  </section>
+
+  <!-- ==================== APIARI ==================== -->
+  <section class="view hidden" id="view-apiari">
+    <div class="section-title">📍 Apiari</div>
+    <div class="toolbar">
+      <input type="text" id="searchApiari" placeholder="Cerca apiario...">
+    </div>
+    <div class="card-list" id="apiariList"></div>
+  </section>
+
+  <!-- ==================== FAMIGLIE ==================== -->
+  <section class="view hidden" id="view-famiglie">
+    <div class="section-title">🐝 Famiglie</div>
+    <div class="toolbar">
+      <input type="text" id="searchFamiglie" placeholder="Cerca codice o note...">
+      <select id="filterApiario"><option value="">Tutti gli apiari</option></select>
+    </div>
+    <div class="chip-row" id="filterStatoRow">
+      <button class="chip active" data-stato="">Tutte</button>
+      <button class="chip" data-stato="attiva">Attive</button>
+      <button class="chip" data-stato="orfana">Orfane</button>
+      <button class="chip" data-stato="unita">Unite</button>
+      <button class="chip" data-stato="morta">Morte</button>
+      <button class="chip" data-stato="venduta">Vendute</button>
+    </div>
+    <div class="card-list" id="famiglieList"></div>
+  </section>
+
+  <!-- ==================== IMPOSTAZIONI ==================== -->
+  <section class="view hidden" id="view-impostazioni">
+    <div class="section-title">⚙️ Impostazioni</div>
+
+    <div class="dash-block">
+      <h3>👤 Operatore</h3>
+      <div class="form-group">
+        <label for="setOperatore">Nome predefinito nelle visite</label>
+        <input type="text" id="setOperatore" placeholder="Es. Mario Rossi">
+      </div>
+    </div>
+
+    <div class="dash-block">
+      <h3>💾 Backup dati</h3>
+      <p class="empty-hint" style="text-align:left;margin-bottom:10px;">
+        Tutti i dati restano solo su questo dispositivo. Esporta un file JSON per
+        avere una copia di sicurezza o per trasferire i dati su un altro telefono.
+      </p>
+      <button class="btn btn-primary btn-block" id="btnExport">⬇️ Esporta backup (JSON)</button>
+      <div style="height:10px"></div>
+      <button class="btn btn-secondary btn-block" id="btnImport">⬆️ Importa backup (JSON)</button>
+      <input type="file" id="importFile" accept="application/json" class="hidden">
+    </div>
+
+    <div class="dash-block">
+      <h3>🔄 App</h3>
+      <button class="btn btn-secondary btn-block" id="btnClearCache">🧹 Svuota cache e aggiorna app</button>
+      <p class="empty-hint" style="text-align:left;margin-top:8px;">
+        Non cancella i tuoi dati salvati: forza solo il download dell'ultima versione dell'app.
+      </p>
+    </div>
+
+    <div class="dash-block">
+      <h3>⚠️ Zona pericolosa</h3>
+      <button class="btn btn-danger btn-block" id="btnResetData">🗑️ Cancella tutti i dati</button>
+    </div>
+  </section>
+
+</main>
+
+<button class="fab hidden" id="fab" aria-label="Aggiungi">＋</button>
+
+<nav id="bottom-nav">
+  <button class="nav-btn active" data-view="dashboard"><span class="ni">🏠</span>Dashboard</button>
+  <button class="nav-btn" data-view="apiari"><span class="ni">📍</span>Apiari</button>
+  <button class="nav-btn" data-view="famiglie"><span class="ni">🐝</span>Famiglie</button>
+  <button class="nav-btn" data-view="impostazioni"><span class="ni">⚙️</span>Impostazioni</button>
+</nav>
+
+<!-- ==================== MODALE: FORM APIARIO ==================== -->
+<div class="modal-backdrop hidden" id="modalApiarioForm">
+  <div class="modal">
+    <div class="modal-header"><h2 id="apiarioFormTitle">Nuovo apiario</h2>
+      <button class="modal-close" id="closeApiarioForm">✕</button></div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label for="afNome">Nome postazione *</label>
+        <input type="text" id="afNome" placeholder="Es. Apiario Collina">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="afLat">Latitudine</label>
+          <input type="text" id="afLat" placeholder="Es. 40.0521" inputmode="decimal">
+        </div>
+        <div class="form-group">
+          <label for="afLng">Longitudine</label>
+          <input type="text" id="afLng" placeholder="Es. 15.4021" inputmode="decimal">
+        </div>
+      </div>
+      <button class="btn btn-ghost btn-block" id="btnGeoloc" type="button">📡 Usa posizione GPS attuale</button>
+      <div style="height:12px"></div>
+      <div class="form-group">
+        <label for="afAccesso">Accesso alla postazione</label>
+        <textarea id="afAccesso" placeholder="Es. strada sterrata ultimi 500m, cancello con lucchetto..."></textarea>
+      </div>
+      <div class="form-group">
+        <label for="afFlora">Flora / fonti nettarifere circostanti</label>
+        <textarea id="afFlora" placeholder="Es. castagno, acacia, macchia mediterranea..."></textarea>
+      </div>
+      <div class="form-group">
+        <label for="afNote">Note</label>
+        <div class="textarea-wrap">
+          <textarea id="afNote" placeholder="Note libere sulla postazione..."></textarea>
+          <button class="dict-btn" data-target="afNote" type="button" title="Dettatura vocale">🎙️</button>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Foto postazione</label>
+        <div id="afFotoPreviewWrap"></div>
+        <input type="file" id="afFoto" accept="image/*" capture="environment">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" id="cancelApiarioForm">Annulla</button>
+      <button class="btn btn-primary" id="saveApiarioForm">💾 Salva</button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== MODALE: DETTAGLIO APIARIO ==================== -->
+<div class="modal-backdrop hidden" id="modalApiarioDetail">
+  <div class="modal">
+    <div class="modal-header"><h2 id="adTitle">Apiario</h2>
+      <button class="modal-close" id="closeApiarioDetail">✕</button></div>
+    <div class="modal-body" id="adBody"></div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" id="adEditBtn">✏️ Modifica</button>
+      <button class="btn btn-primary" id="adAddFamigliaBtn">🐝 Nuova famiglia qui</button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== MODALE: FORM FAMIGLIA ==================== -->
+<div class="modal-backdrop hidden" id="modalFamigliaForm">
+  <div class="modal">
+    <div class="modal-header"><h2 id="ffFormTitle">Nuova famiglia</h2>
+      <button class="modal-close" id="closeFamigliaForm">✕</button></div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label for="ffCodice">Codice identificativo *</label>
+        <input type="text" id="ffCodice" placeholder="Es. FAM-023">
+      </div>
+      <div class="form-group">
+        <label for="ffApiario">Apiario attuale *</label>
+        <select id="ffApiario"></select>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="ffOrigine">Origine</label>
+          <select id="ffOrigine">
+            <option value="sciame">Sciame</option>
+            <option value="acquisto">Acquisto</option>
+            <option value="scissione">Scissione</option>
+            <option value="altro">Altro</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="ffReginaAnno">Anno nascita regina</label>
+          <input type="number" id="ffReginaAnno" placeholder="Es. 2026" min="2015" max="2035">
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="ffReginaNote">Origine / marcatura regina</label>
+        <input type="text" id="ffReginaNote" placeholder="Es. regina selezionata, marcata blu...">
+      </div>
+      <div class="form-group">
+        <label for="ffStato">Stato famiglia</label>
+        <select id="ffStato">
+          <option value="attiva">Attiva</option>
+          <option value="orfana">Orfana</option>
+          <option value="unita">Unita ad altra famiglia</option>
+          <option value="morta">Morta</option>
+          <option value="venduta">Venduta</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="ffNote">Note</label>
+        <div class="textarea-wrap">
+          <textarea id="ffNote" placeholder="Note libere sulla famiglia..."></textarea>
+          <button class="dict-btn" data-target="ffNote" type="button" title="Dettatura vocale">🎙️</button>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" id="cancelFamigliaForm">Annulla</button>
+      <button class="btn btn-primary" id="saveFamigliaForm">💾 Salva</button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== MODALE: DETTAGLIO FAMIGLIA ==================== -->
+<div class="modal-backdrop hidden" id="modalFamigliaDetail">
+  <div class="modal">
+    <div class="modal-header"><h2 id="fdTitle">Famiglia</h2>
+      <button class="modal-close" id="closeFamigliaDetail">✕</button></div>
+    <div class="modal-body">
+      <div id="fdBody"></div>
+      <div class="tab-row">
+        <button class="tab-btn active" data-tab="visite">📋 Visite</button>
+        <button class="tab-btn" data-tab="spostamenti">🔀 Spostamenti</button>
+      </div>
+      <div id="fdTabVisite" class="mini-list"></div>
+      <div id="fdTabSpostamenti" class="mini-list hidden"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" id="fdSpostaBtn">🔀 Sposta</button>
+      <button class="btn btn-primary" id="fdVisitaBtn">📝 Nuova visita</button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== MODALE: SPOSTA FAMIGLIA ==================== -->
+<div class="modal-backdrop center hidden" id="modalSposta">
+  <div class="modal">
+    <div class="modal-header"><h2>Sposta famiglia</h2>
+      <button class="modal-close" id="closeSposta">✕</button></div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label for="spNuovoApiario">Nuovo apiario</label>
+        <select id="spNuovoApiario"></select>
+      </div>
+      <div class="form-group">
+        <label for="spMotivo">Motivo dello spostamento</label>
+        <input type="text" id="spMotivo" placeholder="Es. nomadismo, sciamatura, riorganizzazione...">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" id="cancelSposta">Annulla</button>
+      <button class="btn btn-primary" id="confirmSposta">🔀 Conferma spostamento</button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== MODALE: FORM VISITA ==================== -->
+<div class="modal-backdrop hidden" id="modalVisitaForm">
+  <div class="modal">
+    <div class="modal-header"><h2 id="vfTitle">Nuova visita</h2>
+      <button class="modal-close" id="closeVisitaForm">✕</button></div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="vfData">Data *</label>
+          <input type="date" id="vfData">
+        </div>
+        <div class="form-group">
+          <label for="vfMeteo">Meteo</label>
+          <select id="vfMeteo">
+            <option value="soleggiato">☀️ Soleggiato</option>
+            <option value="nuvoloso">☁️ Nuvoloso</option>
+            <option value="ventoso">💨 Ventoso</option>
+            <option value="piovoso">🌧️ Piovoso</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="vfOperatore">Operatore</label>
+        <input type="text" id="vfOperatore">
+      </div>
+
+      <div class="check-row"><input type="checkbox" id="vfReginaVista"><label for="vfReginaVista">👑 Regina vista</label></div>
+      <div class="check-row"><input type="checkbox" id="vfCovataFresca"><label for="vfCovataFresca">🥚 Covata fresca / uova presenti</label></div>
+
+      <div class="form-group">
+        <label for="vfCelleReali">Celle reali</label>
+        <select id="vfCelleReali">
+          <option value="nessuna">Nessuna</option>
+          <option value="emergenza">Emergenza</option>
+          <option value="sciamatura">Sciamatura</option>
+          <option value="sostituzione">Sostituzione</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="vfForza">Forza della famiglia (telaini occupati)</label>
+        <input type="number" id="vfForza" min="0" max="20" placeholder="Es. 7">
+      </div>
+
+      <div class="form-group">
+        <label>Scorte di miele</label>
+        <div class="stars-input" data-target="vfScorteMiele">
+          <button type="button" class="star-btn" data-v="1">🍯</button>
+          <button type="button" class="star-btn" data-v="2">🍯</button>
+          <button type="button" class="star-btn" data-v="3">🍯</button>
+          <button type="button" class="star-btn" data-v="4">🍯</button>
+          <button type="button" class="star-btn" data-v="5">🍯</button>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Scorte di polline</label>
+        <div class="stars-input" data-target="vfScortePolline">
+          <button type="button" class="star-btn" data-v="1">🟡</button>
+          <button type="button" class="star-btn" data-v="2">🟡</button>
+          <button type="button" class="star-btn" data-v="3">🟡</button>
+          <button type="button" class="star-btn" data-v="4">🟡</button>
+          <button type="button" class="star-btn" data-v="5">🟡</button>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Temperamento</label>
+        <div class="seg-control" id="vfTemperamento">
+          <button type="button" class="seg-btn" data-val="docile">😊 Docile</button>
+          <button type="button" class="seg-btn" data-val="normale">😐 Normale</button>
+          <button type="button" class="seg-btn" data-val="aggressivo">😠 Aggressivo</button>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Patologie riscontrate</label>
+        <div class="check-row"><input type="checkbox" id="vfVarroa"><label for="vfVarroa">Varroa</label></div>
+        <div class="check-row"><input type="checkbox" id="vfPeste"><label for="vfPeste">Peste (americana/europea)</label></div>
+        <div class="check-row"><input type="checkbox" id="vfNosema"><label for="vfNosema">Nosema</label></div>
+        <input type="text" id="vfPatologiaAltro" placeholder="Altro (specificare)...">
+      </div>
+
+      <div class="form-group">
+        <label for="vfTrattamenti">Trattamenti effettuati</label>
+        <textarea id="vfTrattamenti" placeholder="Es. Apivar - 2 strisce, inizio blocco covata..."></textarea>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="vfMelariPos">Melari posizionati</label>
+          <input type="number" id="vfMelariPos" min="0">
+        </div>
+        <div class="form-group">
+          <label for="vfMelariRit">Melari ritirati</label>
+          <input type="number" id="vfMelariRit" min="0">
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="vfKgRaccolti">Kg raccolti (se smielatura)</label>
+        <input type="number" id="vfKgRaccolti" min="0" step="0.1">
+      </div>
+
+      <div class="form-group">
+        <label for="vfNote">Note ispezione</label>
+        <div class="textarea-wrap">
+          <textarea id="vfNote" placeholder="Note libere sulla visita..."></textarea>
+          <button class="dict-btn" data-target="vfNote" type="button" title="Dettatura vocale">🎙️</button>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Foto favo / cassa</label>
+        <div id="vfFotoPreviewWrap"></div>
+        <input type="file" id="vfFoto" accept="image/*" capture="environment">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" id="cancelVisitaForm">Annulla</button>
+      <button class="btn btn-primary" id="saveVisitaForm">💾 Registra visita</button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== MODALE: DETTAGLIO VISITA ==================== -->
+<div class="modal-backdrop center hidden" id="modalVisitaDetail">
+  <div class="modal">
+    <div class="modal-header"><h2>Dettaglio visita</h2>
+      <button class="modal-close" id="closeVisitaDetail">✕</button></div>
+    <div class="modal-body" id="vdBody"></div>
+    <div class="modal-footer">
+      <button class="btn btn-danger" id="vdDeleteBtn">🗑️ Elimina visita</button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== MODALE: CONFERMA ==================== -->
+<div class="modal-backdrop center hidden" id="modalConfirm">
+  <div class="modal">
+    <div class="modal-body">
+      <div class="confirm-icon">⚠️</div>
+      <div class="confirm-text" id="confirmText">Confermi l'operazione?</div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" id="confirmCancelBtn">Annulla</button>
+      <button class="btn btn-danger" id="confirmOkBtn">Conferma</button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== MODALE: MANUALE / HELP ==================== -->
+<div class="modal-backdrop hidden" id="modalHelp">
+  <div class="modal">
+    <div class="modal-header"><h2>Manuale d'uso</h2>
+      <button class="modal-close" id="closeHelp">✕</button></div>
+    <div class="modal-body">
+
+      <div class="author-card">
+        <div class="author-card-top">
+          <div class="author-app-icon">🐝</div>
+          <div class="author-app-info">
+            <div class="author-app-name">Apiari <span class="author-ver-badge">v1.0</span></div>
+            <div class="author-app-sub">Produzione Software — Luglio 2026</div>
+          </div>
+        </div>
+        <div class="author-details">
+          <div class="author-line"><strong>© 2026 Lazzaro Serva - Centola</strong></div>
+          <div class="author-line">Via Tasso, 28 – 84051 CENTOLA (SA) – Italia</div>
+          <div class="author-line">🌐 <a href="http://www.graficaesiti.it/" target="_blank" rel="noopener">www.graficaesiti.it</a></div>
+        </div>
+        <div class="author-rights">🔒 <strong>Tutti i diritti riservati.</strong> Vietata la riproduzione, modifica o distribuzione senza autorizzazione scritta del titolare.</div>
+      </div>
+
+      <div class="help-section">
+        <h3>🐝 Come funziona Apiari</h3>
+        <p>L'app gestisce due schede separate: l'<strong>apiario</strong> (la postazione fisica)
+        e la <strong>famiglia</strong> (l'arnia), che è indipendente dall'apiario e può essere
+        spostata liberamente tra postazioni mantenendo tutto lo storico visite.</p>
+      </div>
+
+      <div class="help-section">
+        <h3>📍 Gestione apiari</h3>
+        <ul>
+          <li>Crea un nuovo apiario dalla scheda "Apiari" con il tasto ＋</li>
+          <li>Inserisci coordinate GPS manualmente o con il tasto "Usa posizione GPS attuale"</li>
+          <li>Nella scheda apiario trovi l'elenco delle famiglie attualmente ospitate</li>
+        </ul>
+      </div>
+
+      <div class="help-section">
+        <h3>🐝 Gestione famiglie</h3>
+        <ul>
+          <li>Ogni famiglia ha un codice univoco e uno stato (attiva, orfana, unita, morta, venduta)</li>
+          <li>Il colore dell'anno regina viene calcolato automaticamente dall'anno di nascita, secondo lo standard apistico (bianco/giallo/rosso/verde/blu)</li>
+          <li>Con il tasto "🔀 Sposta" puoi trasferire la famiglia in un altro apiario: lo storico spostamenti resta sempre consultabile nella scheda famiglia</li>
+        </ul>
+      </div>
+
+      <div class="help-section">
+        <h3>📋 Registrare una visita</h3>
+        <ul>
+          <li>Apri la scheda della famiglia e tocca "📝 Nuova visita"</li>
+          <li>La checklist è pensata per un input veloce sul campo: stelline per le scorte, pulsanti per temperamento e patologie</li>
+          <li>Il microfono 🎙️ accanto ai campi note permette di dettare a voce invece di scrivere</li>
+        </ul>
+      </div>
+
+      <div class="help-section">
+        <h3>🚦 Stato a semaforo</h3>
+        <p>Ogni famiglia e ogni apiario mostrano un pallino colorato:</p>
+        <ul>
+          <li><strong style="color:#2e7d32">🟢 Verde</strong> — visitata di recente, nessuna criticità</li>
+          <li><strong style="color:#a06800">🟡 Giallo</strong> — da ricontrollare a breve</li>
+          <li><strong style="color:#c62828">🔴 Rosso</strong> — da controllare con urgenza (mai visitata, troppo tempo trascorso, o l'ultima visita ha segnalato regina non vista, patologie o scorte basse)</li>
+        </ul>
+        <p>Lo stato dell'apiario riflette la situazione più critica tra le famiglie ospitate.</p>
+      </div>
+
+      <div class="help-section">
+        <h3>📲 Installare l'app sul dispositivo</h3>
+        <ul>
+          <li><strong>Android (Chrome):</strong> menu ⋮ → "Aggiungi a schermata Home" o "Installa app" → Installa.</li>
+          <li><strong>iPhone / iPad (Safari):</strong> icona condivisione ⬆ → "Aggiungi a schermata Home" → Aggiungi.</li>
+          <li><strong>PC / Mac (Chrome o Edge):</strong> icona ⊕ nella barra indirizzi → "Installa Apiari".</li>
+        </ul>
+        <p>Una volta installata, l'app si apre a schermo intero senza barre del browser.</p>
+      </div>
+
+      <div class="help-section">
+        <h3>🆕 Aggiornamenti automatici</h3>
+        <p>Quando è disponibile una nuova versione, compare in basso un banner con il messaggio
+        "Nuova versione disponibile". Tocca <strong>Aggiorna</strong> per applicare subito le
+        novità: la pagina si ricaricherà e tutti i tuoi dati rimarranno invariati.</p>
+      </div>
+
+      <div class="help-section">
+        <h3>🔒 Privacy e protezione dei dati</h3>
+        <p><strong>Tutti i dati inseriti vengono salvati esclusivamente su questo dispositivo</strong>
+        nella memoria locale del browser. Nessuna informazione viene trasmessa a server esterni o terze parti.</p>
+        <ul>
+          <li><strong>Nessun account, nessun login.</strong></li>
+          <li><strong>Nessuna connessione a server</strong> — funziona completamente offline.</li>
+          <li><strong>Microfono e GPS</strong> — usati solo su richiesta esplicita, nessun dato viene trasmesso.</li>
+          <li>Cancellare la cache del browser rimuove anche tutti i dati dell'app: usa "Esporta backup" regolarmente.</li>
+          <li>Cambiare browser o dispositivo richiede di importare il backup JSON.</li>
+        </ul>
+        <p style="font-size:13px;">Questa app è conforme al Regolamento UE 2016/679 (GDPR) in quanto non tratta
+        dati personali al di fuori del dispositivo dell'utente.<br/>
+        Titolare: <strong>Lazzaro Serva</strong> · Via Tasso 28 · 84051 Centola (SA) ·
+        <a href="http://www.graficaesiti.it" target="_blank" rel="noopener">www.graficaesiti.it</a></p>
+      </div>
+
+      <div class="help-section">
+        <h3>🛡️ Sicurezza — nota su Google Play Protect</h3>
+        <p>Se compare il messaggio "App non sicura bloccata" di Google Play Protect,
+        non riguarda questa app: quella segnalazione appare per file .apk installati
+        fuori dal Play Store, non per le PWA installate tramite browser.</p>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
