@@ -6,6 +6,22 @@
 // Tutti i diritti riservati – All rights reserved.
 // ============================================================
 
+// ---------------------------------------------------------------
+// Splash Screen — durata minima 3.2s, poi dissolvenza
+// ---------------------------------------------------------------
+const SPLASH_MIN_MS = 3200;
+const __splashStart = Date.now();
+function hideSplash() {
+  const elapsed = Date.now() - __splashStart;
+  const wait = Math.max(0, SPLASH_MIN_MS - elapsed);
+  setTimeout(() => {
+    const el = document.getElementById('splashScreen');
+    if (!el) return;
+    el.classList.add('hide');
+    setTimeout(() => el.remove(), 650);
+  }, wait);
+}
+
 const STORAGE_KEY = 'apiari_data_v1';
 
 let apiari = [];
@@ -943,6 +959,7 @@ function init() {
   refreshApiarioSelects();
   document.querySelectorAll('.dict-btn').forEach(setupDictation);
   renderDashboard();
+  hideSplash();
 }
 init();
 

@@ -33,14 +33,29 @@
 <meta name="description" content="Apiari — gestione di apiari, famiglie e visite apistiche, offline e senza account."/>
 <title>Apiari</title>
 <link rel="manifest" href="manifest.json"/>
-<link rel="icon" href="assets/icon-192.png"/>
-<link rel="apple-touch-icon" href="assets/icon-192.png"/>
+<link rel="icon" type="image/x-icon" href="assets/favicon.ico"/>
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png"/>
+<link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16.png"/>
+<link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png"/>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
+
+<!-- Splash Screen -->
+<div id="splashScreen" role="status" aria-label="Caricamento Apiari">
+  <div class="splash-icon-wrap"><img src="assets/icon-512.png" alt="Apiari" width="140" height="140"></div>
+  <div class="splash-title">🐝 Apiari</div>
+  <div class="splash-sub">Gestione apiari, famiglie e visite apistiche</div>
+  <div class="splash-loader" aria-hidden="true"></div>
+  <div class="splash-author">
+    <div class="splash-author-name">Lazzaro Serva <span class="splash-ver">v1.1</span></div>
+    <div class="splash-author-web">www.graficaesiti.it</div>
+    <div class="splash-author-copy">© 2026 Lazzaro Serva - Centola · Tutti i diritti riservati</div>
+  </div>
+</div>
 
 <!-- Banner aggiornamento -->
 <div id="updateBanner" role="status" aria-live="polite">

@@ -1,6 +1,18 @@
 CHANGELOG — Apiari
 ==================
 
+v1.1 — 31 luglio 2026
+---------------------
+- Nuovo set di icone professionale a partire dall'artwork fornito: angoli
+  arrotondati con trasparenza reale (icon-192.png / icon-512.png),
+  varianti "maskable" full-bleed per Android (icon-192-maskable.png /
+  icon-512-maskable.png), apple-touch-icon dedicata per iOS e favicon
+  multi-formato (favicon.ico, 16px, 32px)
+- Aggiunto Splash Screen animato all'avvio (durata minima 3,2s): icona
+  con animazione d'ingresso e bagliore pulsante, dati fissi dell'autore
+  (nome, sito, copyright) subito sotto l'icona
+- Service Worker aggiornato alla cache v1.1 con i nuovi asset grafici
+
 v1.0 — 31 luglio 2026
 ---------------------
 Prima release funzionante.

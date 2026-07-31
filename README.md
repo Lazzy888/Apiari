@@ -5,7 +5,7 @@ Offline-first, nessun account, nessun server: tutti i dati restano sul dispositi
 
 | | |
 |---|---|
-| **Versione** | 1.0 |
+| **Versione** | 1.1 |
 | **Autore** | Lazzaro Serva — [www.graficaesiti.it](http://www.graficaesiti.it/) |
 | **Licenza** | Tutti i diritti riservati (vedi `LICENSE`) |
 | **Tecnologie** | HTML5 · CSS3 · JavaScript vanilla · PWA offline-first |
@@ -33,8 +33,14 @@ apiari/
 ├── manifest.json           ← configurazione PWA
 ├── service-worker.js       ← cache offline + aggiornamenti
 ├── assets/
-│   ├── icon-192.png
-│   └── icon-512.png
+│   ├── icon-192.png              (any, angoli trasparenti)
+│   ├── icon-512.png               (any, angoli trasparenti)
+│   ├── icon-192-maskable.png      (maskable, full-bleed)
+│   ├── icon-512-maskable.png      (maskable, full-bleed)
+│   ├── apple-touch-icon.png       (180×180, iOS)
+│   ├── favicon.ico
+│   ├── favicon-32.png
+│   └── favicon-16.png
 ├── LICENSE
 ├── AUTHORS
 ├── README.md

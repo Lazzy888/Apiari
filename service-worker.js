@@ -6,7 +6,7 @@
 // Tutti i diritti riservati – All rights reserved.
 // ============================================================
 
-const CACHE_NAME = 'apiari-v1.0';
+const CACHE_NAME = 'apiari-v1.1';
 const ASSETS = [
   './',
   './index.html',
@@ -14,7 +14,13 @@ const ASSETS = [
   './app.js',
   './manifest.json',
   './assets/icon-192.png',
-  './assets/icon-512.png'
+  './assets/icon-512.png',
+  './assets/icon-192-maskable.png',
+  './assets/icon-512-maskable.png',
+  './assets/apple-touch-icon.png',
+  './assets/favicon.ico',
+  './assets/favicon-32.png',
+  './assets/favicon-16.png'
 ];
 
 // ── Installazione: NON chiamare skipWaiting() qui. ──
