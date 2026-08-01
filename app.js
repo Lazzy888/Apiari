@@ -1,5 +1,5 @@
 // ============================================================
-// Apiari v1.0 — Gestione apiari, famiglie e visite apistiche
+// Apiari v1.2 — Gestione apiari, famiglie e visite apistiche
 // Copyright (c) 2026 Lazzaro Serva - Centola
 // Via Tasso, 28 – 84051 CENTOLA (SA) – Italia
 // http://www.graficaesiti.it/
@@ -878,7 +878,7 @@ document.getElementById('setOperatore').addEventListener('change', e => {
 });
 
 document.getElementById('btnExport').addEventListener('click', () => {
-  const payload = { app: 'Apiari', version: '1.0', exportedAt: new Date().toISOString(), apiari, famiglie, visite, settings };
+  const payload = { app: 'Apiari', version: '1.2', exportedAt: new Date().toISOString(), apiari, famiglie, visite, settings };
   const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
   const stamp = todayStr().replace(/-/g, '');
   triggerDownload(blob, `apiari-backup-${stamp}.json`);
@@ -886,28 +886,101 @@ document.getElementById('btnExport').addEventListener('click', () => {
 });
 
 document.getElementById('btnImport').addEventListener('click', () => document.getElementById('importFile').click());
+
+let pendingImport = null;
+
 document.getElementById('importFile').addEventListener('change', e => {
-  const file = e.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = ev => {
-    let parsed;
-    try { parsed = JSON.parse(ev.target.result); } catch { toast('File non valido'); return; }
-    if (!parsed || !Array.isArray(parsed.apiari) || !Array.isArray(parsed.famiglie)) { toast('File di backup non riconosciuto'); return; }
-    showConfirm('Importare questo backup sostituirà tutti i dati attuali. Continuare?', () => {
-      apiari = parsed.apiari || [];
-      famiglie = parsed.famiglie || [];
-      visite = parsed.visite || [];
-      settings = { ...settings, ...(parsed.settings || {}) };
-      saveData();
-      refreshApiarioSelects();
-      renderAll();
-      toast('Backup importato');
+  const files = Array.from(e.target.files || []);
+  if (!files.length) return;
+
+  Promise.all(files.map(f => f.text())).then(texts => {
+    let combined = { apiari: [], famiglie: [], visite: [] };
+    let errors = 0;
+    texts.forEach(txt => {
+      try {
+        const parsed = JSON.parse(txt);
+        if (parsed && Array.isArray(parsed.apiari) && Array.isArray(parsed.famiglie)) {
+          combined.apiari.push(...parsed.apiari);
+          combined.famiglie.push(...parsed.famiglie);
+          combined.visite.push(...(parsed.visite || []));
+        } else errors++;
+      } catch { errors++; }
     });
-  };
-  reader.readAsText(file);
+    if (!combined.apiari.length && !combined.famiglie.length) {
+      toast(errors ? 'File non valido o non riconosciuto' : 'Il file non contiene dati');
+      return;
+    }
+    pendingImport = combined;
+    document.getElementById('importChoiceInfo').textContent =
+      `Il file selezionato contiene ${combined.apiari.length} apiari, ${combined.famiglie.length} famiglie e ${combined.visite.length} visite. Come vuoi procedere?`;
+    openModal('modalImportChoice');
+  });
+
   e.target.value = '';
 });
+
+document.getElementById('closeImportChoice').addEventListener('click', () => closeModal('modalImportChoice'));
+document.getElementById('importCancelBtn').addEventListener('click', () => closeModal('modalImportChoice'));
+
+document.getElementById('importAppendBtn').addEventListener('click', () => {
+  if (!pendingImport) return;
+  mergeImportData(pendingImport);
+  closeModal('modalImportChoice');
+});
+
+document.getElementById('importReplaceBtn').addEventListener('click', () => {
+  if (!pendingImport) return;
+  closeModal('modalImportChoice');
+  showConfirm('Sostituire TUTTI i dati attuali con quelli del file? L\'operazione non è reversibile.', () => {
+    apiari = pendingImport.apiari || [];
+    famiglie = pendingImport.famiglie || [];
+    visite = pendingImport.visite || [];
+    saveData();
+    refreshApiarioSelects();
+    renderAll();
+    toast('Backup importato (sostituzione completa)');
+  });
+});
+
+// Unisce apiari/famiglie/visite importati a quelli esistenti, rigenerando gli ID
+// per evitare collisioni e ricollegando correttamente i riferimenti incrociati.
+function mergeImportData(data) {
+  const idMapApiari = {};
+  const idMapFamiglie = {};
+
+  const newApiari = (data.apiari || []).map(a => {
+    const newId = uuid();
+    idMapApiari[a.id] = newId;
+    return { ...a, id: newId };
+  });
+
+  const newFamiglie = (data.famiglie || []).map(f => {
+    const newId = uuid();
+    idMapFamiglie[f.id] = newId;
+    const newStorico = (f.storicoSpostamenti || []).map(s => ({
+      ...s,
+      daApiarioId: idMapApiari[s.daApiarioId] || s.daApiarioId,
+      aApiarioId: idMapApiari[s.aApiarioId] || s.aApiarioId
+    }));
+    return { ...f, id: newId, apiarioId: idMapApiari[f.apiarioId] || f.apiarioId, storicoSpostamenti: newStorico };
+  });
+
+  const newVisite = (data.visite || []).map(v => ({
+    ...v,
+    id: uuid(),
+    famigliaId: idMapFamiglie[v.famigliaId] || v.famigliaId,
+    apiarioId: idMapApiari[v.apiarioId] || v.apiarioId
+  }));
+
+  apiari = apiari.concat(newApiari);
+  famiglie = famiglie.concat(newFamiglie);
+  visite = visite.concat(newVisite);
+  saveData();
+  refreshApiarioSelects();
+  renderAll();
+  pendingImport = null;
+  toast(`Aggiunti ${newApiari.length} apiari, ${newFamiglie.length} famiglie e ${newVisite.length} visite`);
+}
 
 document.getElementById('btnClearCache').addEventListener('click', () => {
   showConfirm('Svuotare la cache e ricaricare l\'app? I dati salvati non verranno toccati.', async () => {

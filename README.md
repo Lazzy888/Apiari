@@ -5,7 +5,7 @@ Offline-first, nessun account, nessun server: tutti i dati restano sul dispositi
 
 | | |
 |---|---|
-| **Versione** | 1.1 |
+| **Versione** | 1.2 |
 | **Autore** | Lazzaro Serva — [www.graficaesiti.it](http://www.graficaesiti.it/) |
 | **Licenza** | Tutti i diritti riservati (vedi `LICENSE`) |
 | **Tecnologie** | HTML5 · CSS3 · JavaScript vanilla · PWA offline-first |
@@ -44,10 +44,11 @@ apiari/
 ├── LICENSE
 ├── AUTHORS
 ├── README.md
-└── CHANGELOG
+├── CHANGELOG
+└── demo-apiari.json       ← dati di esempio (3 apiari, 7 famiglie, 19 visite)
 ```
 
-## Funzioni v1.0
+## Funzioni v1.2
 
 - Anagrafica apiari e famiglie (schede indipendenti)
 - Spostamento famiglia tra apiari con storico
@@ -55,8 +56,17 @@ apiari/
 - Trattamento cumulato per tutte le famiglie di un apiario
 - Dashboard con stato a semaforo e situazioni critiche in evidenza
 - Ricerca e filtri
-- Backup/ripristino dati in JSON
+- Backup/ripristino dati in JSON, con possibilità di **unire (append)** più file
+  senza perdere i dati già presenti, oltre alla sostituzione completa
 - Installabile, offline, con banner di aggiornamento
+
+## Dati di esempio
+
+Il file `demo-apiari.json` contiene 3 apiari, 7 famiglie e 19 visite già
+compilati con tutte le funzioni della v1.2 (stati diversi, uno spostamento
+tra apiari, un trattamento cumulato, una smielatura). Per provarlo: apri
+l'app → Impostazioni → "Importa backup" → seleziona il file → scegli
+"➕ Aggiungi ai dati esistenti".
 
 Roadmap (v2/v3): agenda visite con promemoria, QR code per apertura rapida
 scheda famiglia, registro trattamenti con scadenze, report e statistiche

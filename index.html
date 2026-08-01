@@ -1,6 +1,6 @@
 <!--
   ============================================================
-  Apiari v1.0 — Gestione apiari, famiglie e visite apistiche
+  Apiari v1.2 — Gestione apiari, famiglie e visite apistiche
   Copyright (c) 2026 Lazzaro Serva - Centola
   Via Tasso, 28 – 84051 CENTOLA (SA) – Italia
   http://www.graficaesiti.it/
@@ -51,7 +51,7 @@
   <div class="splash-sub">Gestione apiari, famiglie e visite apistiche</div>
   <div class="splash-loader" aria-hidden="true"></div>
   <div class="splash-author">
-    <div class="splash-author-name">Lazzaro Serva <span class="splash-ver">v1.1</span></div>
+    <div class="splash-author-name">Lazzaro Serva <span class="splash-ver">v1.2</span></div>
     <div class="splash-author-web">www.graficaesiti.it</div>
     <div class="splash-author-copy">© 2026 Lazzaro Serva - Centola · Tutti i diritti riservati</div>
   </div>
@@ -148,7 +148,12 @@
       <button class="btn btn-primary btn-block" id="btnExport">⬇️ Esporta backup (JSON)</button>
       <div style="height:10px"></div>
       <button class="btn btn-secondary btn-block" id="btnImport">⬆️ Importa backup (JSON)</button>
-      <input type="file" id="importFile" accept="application/json" class="hidden">
+      <p class="empty-hint" style="text-align:left;margin-top:8px;">
+        Puoi importare un backup completo o unire dati provenienti da altri
+        apicoltori/dispositivi: alla selezione del file ti verrà chiesto se
+        aggiungerli a quelli esistenti o sostituire tutto.
+      </p>
+      <input type="file" id="importFile" accept="application/json" multiple class="hidden">
     </div>
 
     <div class="dash-block">
@@ -489,6 +494,27 @@
   </div>
 </div>
 
+<!-- ==================== MODALE: SCELTA IMPORTAZIONE ==================== -->
+<div class="modal-backdrop center hidden" id="modalImportChoice">
+  <div class="modal">
+    <div class="modal-header"><h2>Importa backup</h2>
+      <button class="modal-close" id="closeImportChoice">✕</button></div>
+    <div class="modal-body">
+      <p id="importChoiceInfo" style="font-size:14px;color:var(--text2);line-height:1.6;"></p>
+      <p style="font-size:13px;color:var(--text2);line-height:1.6;">
+        <strong>➕ Aggiungi</strong>: i dati del file vengono aggiunti a quelli già presenti,
+        senza toccarli (utile per unire più apiari o importare la demo).<br>
+        <strong>♻️ Sostituisci</strong>: tutti i dati attuali vengono cancellati e sostituiti con quelli del file.
+      </p>
+    </div>
+    <div class="modal-footer" style="flex-direction:column;gap:9px;">
+      <button class="btn btn-primary btn-block" id="importAppendBtn">➕ Aggiungi ai dati esistenti</button>
+      <button class="btn btn-danger btn-block" id="importReplaceBtn">♻️ Sostituisci tutti i dati</button>
+      <button class="btn btn-secondary btn-block" id="importCancelBtn">Annulla</button>
+    </div>
+  </div>
+</div>
+
 <!-- ==================== MODALE: MANUALE / HELP ==================== -->
 <div class="modal-backdrop hidden" id="modalHelp">
   <div class="modal">
@@ -500,7 +526,7 @@
         <div class="author-card-top">
           <div class="author-app-icon">🐝</div>
           <div class="author-app-info">
-            <div class="author-app-name">Apiari <span class="author-ver-badge">v1.0</span></div>
+            <div class="author-app-name">Apiari <span class="author-ver-badge">v1.2</span></div>
             <div class="author-app-sub">Produzione Software — Luglio 2026</div>
           </div>
         </div>
@@ -516,45 +542,135 @@
         <h3>🐝 Come funziona Apiari</h3>
         <p>L'app gestisce due schede separate: l'<strong>apiario</strong> (la postazione fisica)
         e la <strong>famiglia</strong> (l'arnia), che è indipendente dall'apiario e può essere
-        spostata liberamente tra postazioni mantenendo tutto lo storico visite.</p>
+        spostata liberamente tra postazioni mantenendo l'intero storico spostamenti e visite.</p>
+        <p>Tutto funziona anche <strong>senza connessione internet</strong>: puoi usare l'app
+        in apiario senza campo, i dati restano salvati sul telefono.</p>
       </div>
 
       <div class="help-section">
-        <h3>📍 Gestione apiari</h3>
-        <ul>
-          <li>Crea un nuovo apiario dalla scheda "Apiari" con il tasto ＋</li>
-          <li>Inserisci coordinate GPS manualmente o con il tasto "Usa posizione GPS attuale"</li>
-          <li>Nella scheda apiario trovi l'elenco delle famiglie attualmente ospitate</li>
-        </ul>
+        <h3>🚀 Provare l'app con dati di esempio</h3>
+        <p>Se vuoi vedere subito l'app popolata prima di iniziare a inserire i tuoi dati reali,
+        in Impostazioni → "Importa backup" puoi caricare il file <strong>demo-apiari.json</strong>
+        incluso nella cartella del progetto: contiene 3 apiari, 7 famiglie e 19 visite di esempio,
+        con tutti gli stati possibili (attiva, orfana, venduta), uno spostamento tra apiari, un
+        trattamento cumulato e una smielatura già registrata. Una volta provato, puoi cancellarlo
+        da Impostazioni → "Cancella tutti i dati" e ripartire da zero.</p>
       </div>
 
       <div class="help-section">
-        <h3>🐝 Gestione famiglie</h3>
-        <ul>
-          <li>Ogni famiglia ha un codice univoco e uno stato (attiva, orfana, unita, morta, venduta)</li>
-          <li>Il colore dell'anno regina viene calcolato automaticamente dall'anno di nascita, secondo lo standard apistico (bianco/giallo/rosso/verde/blu)</li>
-          <li>Con il tasto "🔀 Sposta" puoi trasferire la famiglia in un altro apiario: lo storico spostamenti resta sempre consultabile nella scheda famiglia</li>
-        </ul>
+        <h3>📍 Gestione apiari — passo per passo</h3>
+        <ol style="padding-left:20px;font-size:14px;line-height:1.6;color:var(--text2);">
+          <li>Vai sulla scheda <strong>Apiari</strong> e tocca il tasto ＋ in basso a destra</li>
+          <li>Inserisci il nome della postazione (obbligatorio)</li>
+          <li>Per le coordinate, puoi digitarle a mano oppure toccare <strong>"Usa posizione GPS attuale"</strong>
+              se ti trovi già sul posto: l'app chiederà il permesso di accesso alla posizione</li>
+          <li>Compila accesso, flora circostante e note utili per ritrovare/raggiungere il sito</li>
+          <li>Puoi allegare una foto della postazione dalla fotocamera o dalla galleria</li>
+          <li>Tocca <strong>Salva</strong></li>
+        </ol>
+        <p>Aprendo la scheda di un apiario già creato trovi: i dati generali, l'elenco delle
+        famiglie ospitate in quel momento, il tasto per registrare un <strong>trattamento
+        cumulato</strong> e, in fondo, il tasto per eliminare l'apiario (possibile solo se
+        non ospita più nessuna famiglia).</p>
       </div>
 
       <div class="help-section">
-        <h3>📋 Registrare una visita</h3>
-        <ul>
-          <li>Apri la scheda della famiglia e tocca "📝 Nuova visita"</li>
-          <li>La checklist è pensata per un input veloce sul campo: stelline per le scorte, pulsanti per temperamento e patologie</li>
-          <li>Il microfono 🎙️ accanto ai campi note permette di dettare a voce invece di scrivere</li>
-        </ul>
+        <h3>🐝 Gestione famiglie — passo per passo</h3>
+        <ol style="padding-left:20px;font-size:14px;line-height:1.6;color:var(--text2);">
+          <li>Vai sulla scheda <strong>Famiglie</strong> e tocca ＋ (serve almeno un apiario già creato)</li>
+          <li>Il codice identificativo viene proposto automaticamente (es. FAM-004) ma puoi modificarlo</li>
+          <li>Seleziona l'apiario in cui si trova ora la famiglia</li>
+          <li>Indica origine (sciame, acquisto, scissione), anno di nascita della regina e note
+              sulla sua marcatura/selezione</li>
+          <li>Lo <strong>stato</strong> (attiva, orfana, unita, morta, venduta) determina se la
+              famiglia viene monitorata nel semaforo: solo le famiglie "attiva" vengono conteggiate
+              tra le situazioni critiche</li>
+        </ol>
+        <p>Il <strong>colore dell'anno regina</strong> viene calcolato automaticamente dall'anno di
+        nascita secondo lo standard apistico internazionale a 5 colori (bianco, giallo, rosso,
+        verde, blu) e mostrato nella scheda famiglia.</p>
+        <p>Con il tasto <strong>🔀 Sposta</strong> nella scheda famiglia trasferisci l'arnia in un
+        altro apiario indicando il motivo (nomadismo, sciamatura, riorganizzazione...): lo storico
+        di tutti gli spostamenti resta sempre consultabile nella scheda, insieme allo storico
+        completo delle visite — anche quelle avvenute in apiari diversi da quello attuale.</p>
+      </div>
+
+      <div class="help-section">
+        <h3>📋 Registrare una visita — passo per passo</h3>
+        <ol style="padding-left:20px;font-size:14px;line-height:1.6;color:var(--text2);">
+          <li>Apri la scheda della famiglia interessata e tocca <strong>"📝 Nuova visita"</strong></li>
+          <li>Imposta data, meteo e operatore (puoi impostare un operatore predefinito in
+              Impostazioni per non doverlo digitare ogni volta)</li>
+          <li>Spunta se la regina è stata vista e se è presente covata fresca</li>
+          <li>Indica eventuali celle reali, la forza in telaini occupati, le scorte di miele e
+              polline (toccando le icone a stellina) e il temperamento della famiglia</li>
+          <li>Segnala eventuali patologie riscontrate (varroa, peste, nosema o altro)</li>
+          <li>Annota i trattamenti effettuati, i melari posizionati/ritirati e i kg raccolti in
+              caso di smielatura</li>
+          <li>Nel campo note puoi scrivere liberamente oppure toccare il microfono 🎙️ per dettare
+              a voce — utile quando hai le mani occupate</li>
+          <li>Puoi allegare una foto del favo o della cassa, poi tocca <strong>"💾 Registra visita"</strong></li>
+        </ol>
+        <p>Tutte le visite registrate restano visibili nella scheda della famiglia, ordinate dalla
+        più recente; toccandone una si apre il dettaglio completo con tasti per modificarla o
+        eliminarla.</p>
+      </div>
+
+      <div class="help-section">
+        <h3>📋 Trattamento cumulato per apiario</h3>
+        <p>Quando un intervento riguarda l'intero apiario (es. trattamento antivarroa di inizio
+        stagione), apri la scheda dell'apiario e tocca <strong>"Trattamento cumulato per tutte le
+        famiglie"</strong>: verrà creata automaticamente una visita rapida per ciascuna famiglia
+        attiva ospitata, con il testo del trattamento indicato. Queste visite non modificano i
+        dati di dettaglio (regina, scorte, patologie) delle famiglie, ma aggiornano comunque la
+        data dell'ultimo controllo ai fini del semaforo.</p>
       </div>
 
       <div class="help-section">
         <h3>🚦 Stato a semaforo</h3>
         <p>Ogni famiglia e ogni apiario mostrano un pallino colorato:</p>
         <ul>
-          <li><strong style="color:#2e7d32">🟢 Verde</strong> — visitata di recente, nessuna criticità</li>
-          <li><strong style="color:#a06800">🟡 Giallo</strong> — da ricontrollare a breve</li>
-          <li><strong style="color:#c62828">🔴 Rosso</strong> — da controllare con urgenza (mai visitata, troppo tempo trascorso, o l'ultima visita ha segnalato regina non vista, patologie o scorte basse)</li>
+          <li><strong style="color:#2e7d32">🟢 Verde</strong> — visitata di recente (entro 21 giorni), nessuna criticità</li>
+          <li><strong style="color:#a06800">🟡 Giallo</strong> — tra 22 e 35 giorni dall'ultima visita, da ricontrollare a breve</li>
+          <li><strong style="color:#c62828">🔴 Rosso</strong> — oltre 35 giorni, mai visitata, oppure l'ultima visita ha
+              segnalato regina non vista, patologie o scorte di miele molto basse (indipendentemente da quanto tempo è passato)</li>
+          <li><strong style="color:#666">⚪ Grigio</strong> — famiglia non attiva (orfana, unita, morta, venduta) oppure
+              apiario senza famiglie attive: non viene monitorato</li>
         </ul>
-        <p>Lo stato dell'apiario riflette la situazione più critica tra le famiglie ospitate.</p>
+        <p>Lo stato dell'apiario riflette sempre la situazione più critica tra le famiglie attive ospitate.</p>
+      </div>
+
+      <div class="help-section">
+        <h3>🔎 Ricerca e filtri</h3>
+        <p>Nella scheda Apiari puoi cercare per nome. Nella scheda Famiglie puoi cercare per
+        codice o contenuto delle note, filtrare per apiario di appartenenza e per stato
+        (attive, orfane, unite, morte, vendute) tramite i pulsanti a chip sotto la barra di ricerca.</p>
+      </div>
+
+      <div class="help-section">
+        <h3>💾 Backup: esportare i dati</h3>
+        <p>In Impostazioni → <strong>"Esporta backup (JSON)"</strong> scarichi un file con tutti i
+        tuoi apiari, famiglie e visite. Conservalo in un posto sicuro (email, cloud personale,
+        computer): è l'unico modo per recuperare i dati se cambi telefono o cancelli la cache
+        del browser. Consigliato farlo regolarmente, ad esempio dopo ogni giro di visite importanti.</p>
+      </div>
+
+      <div class="help-section">
+        <h3>⬆️ Backup: importare o unire dati</h3>
+        <p>In Impostazioni → <strong>"Importa backup (JSON)"</strong> puoi selezionare uno o più
+        file JSON (anche insieme, ad esempio i backup di più dispositivi o di altri
+        apicoltori/collaboratori). Dopo la selezione l'app chiede come procedere:</p>
+        <ul>
+          <li><strong>➕ Aggiungi ai dati esistenti</strong> — i nuovi apiari, famiglie e visite
+              vengono aggiunti a quelli già presenti sul dispositivo, senza toccarli. Utile per
+              unire i dati di più postazioni o dispositivi in un unico apparecchio, o per
+              caricare il file demo di esempio. Gli identificativi vengono rigenerati
+              automaticamente per evitare conflitti, mantenendo tutti i collegamenti corretti tra
+              apiari, famiglie e visite.</li>
+          <li><strong>♻️ Sostituisci tutti i dati</strong> — cancella tutto quello che c'è
+              attualmente sul dispositivo e lo sostituisce con il contenuto del file importato.
+              Operazione irreversibile, viene richiesta un'ulteriore conferma.</li>
+        </ul>
       </div>
 
       <div class="help-section">
@@ -564,14 +680,17 @@
           <li><strong>iPhone / iPad (Safari):</strong> icona condivisione ⬆ → "Aggiungi a schermata Home" → Aggiungi.</li>
           <li><strong>PC / Mac (Chrome o Edge):</strong> icona ⊕ nella barra indirizzi → "Installa Apiari".</li>
         </ul>
-        <p>Una volta installata, l'app si apre a schermo intero senza barre del browser.</p>
+        <p>Una volta installata, l'app si apre a schermo intero senza barre del browser, con
+        icona e schermata di avvio dedicate.</p>
       </div>
 
       <div class="help-section">
         <h3>🆕 Aggiornamenti automatici</h3>
         <p>Quando è disponibile una nuova versione, compare in basso un banner con il messaggio
         "Nuova versione disponibile". Tocca <strong>Aggiorna</strong> per applicare subito le
-        novità: la pagina si ricaricherà e tutti i tuoi dati rimarranno invariati.</p>
+        novità: la pagina si ricaricherà e tutti i tuoi dati rimarranno invariati. Se qualcosa
+        non funziona correttamente dopo un aggiornamento, prova "Svuota cache e aggiorna app" in
+        Impostazioni: non tocca i dati salvati, forza solo lo scaricamento dell'ultima versione.</p>
       </div>
 
       <div class="help-section">

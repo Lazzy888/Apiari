@@ -1,8 +1,8 @@
 {
   "name": "Apiari",
   "short_name": "Apiari",
-  "version": "1.1",
-  "description": "Apiari v1.1 – Gestione apiari, famiglie e visite apistiche. Copyright (c) 2026 Lazzaro Serva - Centola. Tutti i diritti riservati.",
+  "version": "1.2",
+  "description": "Apiari v1.2 – Gestione apiari, famiglie e visite apistiche. Copyright (c) 2026 Lazzaro Serva - Centola. Tutti i diritti riservati.",
   "author": "Lazzaro Serva – http://www.graficaesiti.it/",
   "start_url": "./",
   "display": "standalone",

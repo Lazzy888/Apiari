@@ -1,12 +1,12 @@
 // ============================================================
-// Apiari v1.0 — Service Worker (cache offline + aggiornamenti)
+// Apiari v1.2 — Service Worker (cache offline + aggiornamenti)
 // Copyright (c) 2026 Lazzaro Serva - Centola
 // Via Tasso, 28 – 84051 CENTOLA (SA) – Italia
 // http://www.graficaesiti.it/
 // Tutti i diritti riservati – All rights reserved.
 // ============================================================
 
-const CACHE_NAME = 'apiari-v1.1';
+const CACHE_NAME = 'apiari-v1.2';
 const ASSETS = [
   './',
   './index.html',

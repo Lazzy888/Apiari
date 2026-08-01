@@ -1,6 +1,12 @@
 CHANGELOG — Apiari
 ==================
 
+v1.2 — 1 agosto 2026
+---------------------
+- Numero di versione allineato in tutti i file del progetto (manifest,
+  Service Worker/cache, intestazioni sorgente, manuale d'uso, splash
+  screen, README, AUTHORS, backup JSON di esempio)
+
 v1.1 — 31 luglio 2026
 ---------------------
 - Nuovo set di icone professionale a partire dall'artwork fornito: angoli
@@ -11,6 +17,16 @@ v1.1 — 31 luglio 2026
 - Aggiunto Splash Screen animato all'avvio (durata minima 3,2s): icona
   con animazione d'ingresso e bagliore pulsante, dati fissi dell'autore
   (nome, sito, copyright) subito sotto l'icona
+- Importazione dati in modalità "Aggiungi (append)": è ora possibile unire
+  uno o più file JSON (anche di altri apiari/dispositivi) ai dati già
+  presenti senza cancellarli, con rigenerazione automatica degli
+  identificativi per evitare conflitti; resta disponibile anche la
+  sostituzione completa dei dati
+- Aggiunto file `demo-apiari.json` con 3 apiari, 7 famiglie e 19 visite
+  di esempio, comprensivo di tutti gli stati, uno spostamento tra apiari,
+  un trattamento cumulato e una smielatura
+- Manuale d'uso ampliato con istruzioni dettagliate passo-per-passo per
+  ogni funzione dell'app
 - Service Worker aggiornato alla cache v1.1 con i nuovi asset grafici
 
 v1.0 — 31 luglio 2026
