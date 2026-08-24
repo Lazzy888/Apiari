@@ -1,5 +1,5 @@
 // ============================================================
-// Apiari v1.3 — Gestione apiari, famiglie e visite apistiche
+// Apiari v1.4 — Gestione apiari, famiglie e visite apistiche
 // Copyright (c) 2026 Lazzaro Serva - Centola
 // Via Tasso, 28 – 84051 CENTOLA (SA) – Italia
 // http://www.graficaesiti.it/
@@ -878,7 +878,7 @@ document.getElementById('setOperatore').addEventListener('change', e => {
 });
 
 document.getElementById('btnExport').addEventListener('click', () => {
-  const payload = { app: 'Apiari', version: '1.3', exportedAt: new Date().toISOString(), apiari, famiglie, visite, settings };
+  const payload = { app: 'Apiari', version: '1.4', exportedAt: new Date().toISOString(), apiari, famiglie, visite, settings };
   const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
   const stamp = todayStr().replace(/-/g, '');
   triggerDownload(blob, `apiari-backup-${stamp}.json`);

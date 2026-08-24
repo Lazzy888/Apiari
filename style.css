@@ -1,5 +1,5 @@
 /* ============================================================
-   Apiari v1.3
+   Apiari v1.4
    Copyright (c) 2026 Lazzaro Serva - Centola
    http://www.graficaesiti.it/
    Tutti i diritti riservati – All rights reserved.
@@ -58,6 +58,7 @@ header#header {
 header#header .logo { font-size:28px; }
 header#header .title { flex:1; font-size:var(--fs-title); font-weight:900; line-height:1.15; }
 header#header .title span { display:block; font-size:12px; font-weight:600; opacity:.9; }
+header#header .title .hdr-dedica { font-size:10.5px; font-weight:600; font-style:italic; opacity:.82; margin-top:1px; }
 .hdr-btn {
   background:rgba(255,255,255,.18); border:none; color:#fff;
   width:42px; height:42px; border-radius:50%; font-size:18px; font-weight:800;
