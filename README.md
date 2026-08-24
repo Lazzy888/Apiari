@@ -5,7 +5,7 @@ Offline-first, nessun account, nessun server: tutti i dati restano sul dispositi
 
 | | |
 |---|---|
-| **Versione** | 1.2 |
+| **Versione** | 1.3 |
 | **Autore** | Lazzaro Serva — [www.graficaesiti.it](http://www.graficaesiti.it/) |
 | **Licenza** | Tutti i diritti riservati (vedi `LICENSE`) |
 | **Tecnologie** | HTML5 · CSS3 · JavaScript vanilla · PWA offline-first |
@@ -48,7 +48,7 @@ apiari/
 └── demo-apiari.json       ← dati di esempio (3 apiari, 7 famiglie, 19 visite)
 ```
 
-## Funzioni v1.2
+## Funzioni v1.3
 
 - Anagrafica apiari e famiglie (schede indipendenti)
 - Spostamento famiglia tra apiari con storico
@@ -63,7 +63,7 @@ apiari/
 ## Dati di esempio
 
 Il file `demo-apiari.json` contiene 3 apiari, 7 famiglie e 19 visite già
-compilati con tutte le funzioni della v1.2 (stati diversi, uno spostamento
+compilati con tutte le funzioni della v1.3 (stati diversi, uno spostamento
 tra apiari, un trattamento cumulato, una smielatura). Per provarlo: apri
 l'app → Impostazioni → "Importa backup" → seleziona il file → scegli
 "➕ Aggiungi ai dati esistenti".

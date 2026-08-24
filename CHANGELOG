@@ -1,6 +1,16 @@
 CHANGELOG — Apiari
 ==================
 
+v1.3 — 1 agosto 2026
+---------------------
+- Splash screen aggiornato allo stesso schema adottato per le altre app
+  della suite (skill graficaesiti-pwa §31): durata minima portata a 4
+  secondi e aggiunta una dedica, mostrata in evidenza tra il motto e
+  l'indicatore di caricamento — "Dedicata al caro amico Nanni Mayer,
+  apicoltore, allevatore, assaggiatore: un vero cultore delle api"
+- Aggiunto un breve richiamo alla dedica anche nel manuale d'uso
+- Numero di versione allineato in tutti i file del progetto
+
 v1.2 — 1 agosto 2026
 ---------------------
 - Numero di versione allineato in tutti i file del progetto (manifest,
